@@ -1,0 +1,7 @@
+[package]
+name = "gpio_test"
+version = "0.1.0"
+authors = ["noah <noah.kennedy.professional@gmail.com>"]
+
+[dependencies]
+sysfs_gpio = "0.5"
