@@ -18,9 +18,20 @@ fn blink_led(led_pin: u64) -> sysfs_gpio::Result<()> {
     let my_led = Pin::new(led_pin); // number depends on chip, etc.
     my_led.with_exported(|| {
         my_led.set_direction(Direction::Low).expect("Failed to set direction!");
-        my_led.set_value(0).unwrap();
+        
+        let mut result = my_led.set_value(0);
+        if result.is_err() {
+            return result;
+        }
+        
         sleep(Duration::from_millis(200));
-        my_led.set_value(1).unwrap();
+        
+        result = my_led.set_value(1);
+        if result.is_err() {
+            return result;
+        }
+        
         sleep(Duration::from_millis(200));
+        Ok(())
     })
 }
