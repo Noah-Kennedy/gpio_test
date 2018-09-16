@@ -8,8 +8,8 @@ fn main() {
     for i in 0..30 {
         let result = blink_led(i);
         match result {
-            Some() => println!("Successfully blinked LED at {}!", i),
-            None => println!("Failed to blink LED at {}!", i)
+            Ok(_) => println!("Successfully blinked LED at {}!", i),
+            Err(_) => println!("Failed to blink LED at {}!", i)
         }
     }
 }
