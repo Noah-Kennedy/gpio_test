@@ -5,6 +5,10 @@ use std::thread::sleep;
 use std::time::Duration;
 
 fn main() {
+    blink_led(18);
+}
+
+fn blink_all_leds() {
     for i in 0..30 {
         let result = blink_led(i);
         match result {
