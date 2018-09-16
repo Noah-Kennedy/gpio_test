@@ -1,44 +1,23 @@
-extern crate sysfs_gpio;
+extern crate rppal;
 
-use sysfs_gpio::{Direction, Pin};
-use std::thread::sleep;
+use std::thread;
 use std::time::Duration;
 
+use rppal::gpio::{Gpio, Mode, Level};
+use rppal::system::DeviceInfo;
+
+// The GPIO module uses BCM pin numbering. BCM GPIO 18 is tied to physical pin 12.
+const GPIO_LED: u8 = 18;
+
 fn main() {
-    blink_led(18);
-}
-
-fn blink_all_leds() {
-    for i in 0..30 {
-        let result = blink_led(i);
-        match result {
-            Ok(_) => println!("Successfully blinked LED at {}!", i),
-            Err(_) => println!("Failed to blink LED at {}!", i)
-        }
-    }
-}
-
-fn blink_led(led_pin: u64) -> sysfs_gpio::Result<()> {
+    let device_info = DeviceInfo::new().expect("Could not get GPIO Pin!");
+    println!("Model: {} (SoC: {})", device_info.model(), device_info.soc());
     
-    let my_led = Pin::new(led_pin); // number depends on chip, etc.
+    let mut gpio = Gpio::new().unwrap();
+    gpio.set_mode(GPIO_LED, Mode::Output);
     
-    my_led.with_exported(|| {
-        
-        my_led.set_direction(Direction::Low).expect("Failed to set direction!");
-        
-        let mut result = my_led.set_value(0);
-        if result.is_err() {
-            return result;
-        }
-        
-        //sleep(Duration::from_millis(200));
-        
-        result = my_led.set_value(1);
-        if result.is_err() {
-            return result;
-        }
-        
-        //sleep(Duration::from_millis(200));
-        Ok(())
-    })
+    // Blink an LED attached to the pin on and off
+    gpio.write(GPIO_LED, Level::High);
+    thread::sleep(Duration::from_millis(500));
+    gpio.write(GPIO_LED, Level::Low);
 }
